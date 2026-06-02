@@ -149,9 +149,12 @@ export function Robot({ level = 1, targets = [], onCollect, ...props }) {
 
     rigidBodyRef.current.setLinvel(velocity, true);
 
-    // 7. Update body rotation to face camera yaw smoothly (Strafing Mode)
-    const targetQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), cameraYaw.current);
-    meshGroupRef.current.quaternion.slerp(targetQuat, 0.2);
+    // 7. Update body rotation to face movement direction smoothly
+    if (isMoving) {
+      const angle = Math.atan2(velocity.x, velocity.z);
+      const targetQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle + Math.PI);
+      meshGroupRef.current.quaternion.slerp(targetQuat, 0.2);
+    }
 
     // 8. Camera Follow
     const cameraOffset = new THREE.Vector3(0, 1.5, 3.5);
